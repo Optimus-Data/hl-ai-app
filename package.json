@@ -1,0 +1,36 @@
+{
+  "name": "hl-ai-app",
+  "version": "1.0.0",
+  "description": "API Node.js para orquestracao de conversas com IA, historico em Redis e fluxo de meditacoes com RAG.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "build:db": "node src/chatbot_config/meditations_config/initialize_db.js",
+    "test": "node --test src/tests/*.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+"@huggingface/inference": "^4.0.5",
+    "@huggingface/transformers": "^3.5.0",
+    "@langchain/community": "^0.3.42",
+    "@langchain/core": "^0.3.49",
+    "@langchain/langgraph": "^0.2.67",
+    "@langchain/openai": "^0.5.10",
+    "@langchain/textsplitters": "^0.1.0",
+    "axios": "^1.9.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "faiss-node": "^0.5.1",
+    "fs": "^0.0.1-security",
+    "fs-extra": "^11.3.0",
+    "langchain": "^0.3.24",
+    "node-cache": "^5.1.2",
+    "path": "^0.12.7",
+    "pdf-parse": "^1.1.1",
+    "redis": "^4.7.0",
+    "uuid": "^11.1.0"
+  }
+}

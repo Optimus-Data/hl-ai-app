@@ -1,0 +1,11 @@
+[
+  {
+    "id": "2026-01-01",
+    "title": "Titulo de exemplo",
+    "author": "Autor de exemplo",
+    "data": "2026-01-01",
+    "bible_reference": "Joao 3:16",
+    "introduction": "Introducao de exemplo para estruturar o arquivo.",
+    "body": "Corpo de exemplo para demonstrar o formato esperado pelo normalizador."
+  }
+]

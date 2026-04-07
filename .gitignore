@@ -1,0 +1,10 @@
+assets/
+node_modules/
+.env
+.env.*
+npm-debug.log*
+
+logs/*.json
+.codex
+
+.DS_Store
