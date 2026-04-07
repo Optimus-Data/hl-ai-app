@@ -24,7 +24,6 @@ const deserializeMessages = (serializedMessages) => {
 
 async function getMeditationsConversation(threadId) {
   if (!threadId) {
-    console.log('ID da conversa é obrigatório');
     return null;
   }  
   const key = `conversation:${threadId}`;
@@ -44,7 +43,6 @@ async function processAddMeditationsMessage(threadId, message) {
   const conversation = await getMeditationsConversation(threadId);
   
   if (!conversation) {
-    console.log('Conversa não encontrada');
     return null;
   }
   

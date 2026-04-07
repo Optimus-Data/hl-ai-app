@@ -24,7 +24,6 @@ const deserializeMessages = (serializedMessages) => {
 
 async function processCreateConversation(threadId, initialMessages) {
     if (initialMessages && !Array.isArray(initialMessages)) {
-        console.log("Os mensagens iniciais devem ser um array");
         return null;
     }
 
@@ -46,7 +45,6 @@ async function processCreateConversation(threadId, initialMessages) {
 
 async function getConversation(threadId) {
     if (!threadId) {
-        console.log("ID da conversa é obrigatório");
         return null;
     }
     const key = `conversation:${threadId}`;
@@ -68,7 +66,7 @@ async function getAllThreads() {
         const keys = await getAllKeys("conversation:*");
         return keys.map(key => key.replace("conversation:", ""));
     } catch (error) {
-        console.log("Erro no service ao listar conversas:", error);
+        console.error("Erro ao listar conversas:", error);
         return [];
     }
 }
@@ -79,7 +77,7 @@ async function deleteConversation(threadId) {
         const deleted = await remove(key);
         return deleted;
     } catch (error) {
-        console.log("Erro no service ao excluir conversa:", error);
+        console.error("Erro ao excluir conversa:", error);
         return false;
     }
 }

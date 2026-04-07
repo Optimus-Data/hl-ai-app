@@ -21,14 +21,12 @@ async function createAndSaveEmbeddings() {
         return `Erro: Diretório JSON não encontrado em ${jsonDirectoryPath}`;
     }
 
-    console.log(`Carregando arquivos JSON de: ${jsonDirectoryPath}`);
     const files = fs
         .readdirSync(jsonDirectoryPath)
         .filter(file => file.toLowerCase().endsWith(".json"))
         .map(file => path.join(jsonDirectoryPath, file));
 
     if (files.length === 0) {
-        console.warn(`Nenhum arquivo .json encontrado em ${jsonDirectoryPath}`);
         return "Nenhum arquivo JSON encontrado para processar";
     }
 
@@ -42,7 +40,6 @@ async function createAndSaveEmbeddings() {
     if (allDocuments.length === 0) {
         return "Nenhum documento extraído dos arquivos JSON.";
     }
-    console.log("Total de documentos carregados");
   /*------------------------------------------------+
   |=============== SPLITTING TEXT =================|
   +------------------------------------------------*/
@@ -60,8 +57,6 @@ async function createAndSaveEmbeddings() {
 });
 
     const splitDocs = await splitter.splitDocuments(allDocuments);
-    console.log(`Documentos divididos em ${splitDocs.length} chunks.`);
-
     if (splitDocs.length === 0) {
         return "Nenhum chunk gerado.";
     }
@@ -135,8 +130,6 @@ async function loadRetrieverFromStore() {
     |======== SET RETRIEVER FROM VECTOR STORE ========|
     +------------------------------------------------*/
         const vectorStore = await FaissStore.load(FAISS_INDEX_PATH, embeddings);
-        console.log("Vector Store carregado com sucesso.");
-
         const retriever = vectorStore.asRetriever({
             k: 10,
             // filter: null,

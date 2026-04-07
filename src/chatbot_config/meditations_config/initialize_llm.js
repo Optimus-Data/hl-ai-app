@@ -18,7 +18,6 @@ const {
     determineRetrievalNeed,
     handleDirectResponse,
     handleRetrieverResponse,
-    logDebugInfo,
 } = require("./config_model/llm_utils.js");
 
 /*------------------------------------------------+
@@ -63,16 +62,7 @@ const callModel = async state => {
             recentMessages,
             { retrievalPromptTemplate, retrieval_llm, classifierPrompt, classifier_llm },
         );
-        console.log("\n======== RELEVÂNCIA IDENTIFICADA ========");
-        console.log(" => RELEVÂNCIA:", relevance);
-        console.log(" => RETRIEVER QUERY:", retrieverQuery);
         if (relevance === "false") {
-            console.log("\n======== SKIPPING RETRIEVER ========");
-            console.log(
-                "\n => GENERATING ANSWER AT:",
-                new Date().toLocaleTimeString(),
-            );
-            console.log("======RELEVÂNCIA IDENTIFICADA", relevance);
             return await handleDirectResponse(trimmedMessages, {
                 llm,
                 systemInstructions,
@@ -84,11 +74,11 @@ const callModel = async state => {
                 recentMessages,
                 trimmedMessages,
                 lastMessage,
-                { llm, systemInstructions, retriever, logDebugInfo },
+                { llm, systemInstructions, retriever },
             );
         }
     } catch (error) {
-        console.log("Error in callModel:", error);
+        console.error("Erro no fluxo de meditacoes:", error);
         return {
             messages: [
                 new AIMessage({

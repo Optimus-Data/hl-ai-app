@@ -40,7 +40,6 @@ const deserializeMessages = (serializedMessages) => {
 
 async function getOrchestratorConversation(threadId) {
   if (!threadId) {
-    console.log('ID da conversa é obrigatório');
     return null;
   }  
   const key = `conversation:${threadId}`;

@@ -2,37 +2,6 @@ const { ChatOpenAI } = require("@langchain/openai");
 const { ChatPromptTemplate } = require("@langchain/core/prompts");
 const { AIMessage } = require("@langchain/core/messages");
 const axios = require("axios");
-const fs = require("fs/promises");
-const path = require("path");
-
-const LOGS_PATH = path.join(
-    __dirname,
-    "..",
-    "..",
-    "logs",
-    "logs_no_retriever.json",
-);
-const LOGS_RETRIEVER_PATH = path.join(
-    __dirname,
-    "..",
-    "..",
-    "logs",
-    "logs_retriever.json",
-);
-const QUERY_PATH = path.join(
-    __dirname,
-    "..",
-    "..",
-    "logs",
-    "query_retriever.json",
-);
-const RELEVANCE_PATH = path.join(
-    __dirname,
-    "..",
-    "..",
-    "logs",
-    "relevance_retriever.json",
-);
 const token = process.env.ML_API_TOKEN;
 const baseUrl = process.env.ML_BASE_URL;
 const url = `${baseUrl}/lutheran_relevance`;
@@ -275,89 +244,6 @@ const createTrimmer = () => {
     };
 };
 
-async function saveAnalysis(analysisData, relevance) {
-    let analyses = [];
-    if (relevance === "true") {
-        try {
-            try {
-                const fileContent = await fs.readFile(QUERY_PATH, "utf-8");
-                analyses = JSON.parse(fileContent);
-            } catch (error) {
-                if (error.code !== "ENOENT") throw error;
-            }
-            analyses.push({
-                timestamp: new Date().toISOString(),
-                ...analysisData,
-            });
-            await fs.writeFile(QUERY_PATH, JSON.stringify(analyses, null, 2));
-        } catch (error) {
-            console.error("Erro ao salvar análise:", error);
-        }
-    } else {
-        try {
-            try {
-                const fileContent = await fs.readFile(RELEVANCE_PATH, "utf-8");
-                analyses = JSON.parse(fileContent);
-            } catch (error) {
-                if (error.code !== "ENOENT") throw error;
-            }
-            analyses.push({
-                timestamp: new Date().toISOString(),
-                ...analysisData,
-            });
-            await fs.writeFile(
-                RELEVANCE_PATH,
-                JSON.stringify(analyses, null, 2),
-            );
-        } catch (error) {
-            console.error("Erro ao salvar análise:", error);
-        }
-    }
-}
-
-async function saveLog(logData, relevance) {
-    let logs = [];
-    if (relevance === "false") {
-        try {
-            try {
-                const fileContent = await fs.readFile(LOGS_PATH, "utf-8");
-                logs = JSON.parse(fileContent);
-            } catch (error) {
-                if (error.code !== "ENOENT") throw error;
-            }
-            logs.push({
-                timestamp: new Date().toISOString(),
-                ...logData,
-            });
-            await fs.writeFile(LOGS_PATH, JSON.stringify(logs, null, 2));
-        } catch (error) {
-            console.error("Erro ao salvar log:", error);
-        }
-    } else {
-        try {
-            try {
-                const fileContent = await fs.readFile(
-                    LOGS_RETRIEVER_PATH,
-                    "utf-8",
-                );
-                logs = JSON.parse(fileContent);
-            } catch (error) {
-                if (error.code !== "ENOENT") throw error;
-            }
-            logs.push({
-                timestamp: new Date().toISOString(),
-                ...logData,
-            });
-            await fs.writeFile(
-                LOGS_RETRIEVER_PATH,
-                JSON.stringify(logs, null, 2),
-            );
-        } catch (error) {
-            console.error("Erro ao salvar log:", error);
-        }
-    }
-}
-
 //===========   FUNCTIONS   ===========//
 const determineRetrievalNeed = async (
     lastMessage,
@@ -382,7 +268,6 @@ const determineRetrievalNeed = async (
             },
         ]);
 		relevance = classifierAnswer.content?.trim().toLowerCase();
-		console.log("Classifier answer:", relevance);
     } catch (error) {
         console.error("Erro ao classificar relevância:", error);
         relevance = "true";
@@ -440,7 +325,7 @@ const handleRetrieverResponse = async (
     recentMessages,
     trimmedMessages,
     lastMessage,
-    { llm, systemInstructions, retriever, logDebugInfo },
+    { llm, systemInstructions, retriever },
 ) => {
     const relevantDocs = await retriever.getRelevantDocuments(query);
     const contextText =
@@ -457,15 +342,6 @@ const handleRetrieverResponse = async (
         },
         ...trimmedMessages.slice(-3),
     ]);
-    if (logDebugInfo) {
-        logDebugInfo(
-            lastMessage,
-            query,
-            recentMessages,
-            relevantDocs,
-            response,
-        );
-    }
     let responseText = response.content;
     if (
         responseText.includes("Note:") ||
@@ -483,29 +359,6 @@ const handleRetrieverResponse = async (
     return { messages: [new AIMessage({ content: responseText })] };
 };
 
-const logDebugInfo = (
-    lastMessage,
-    query,
-    recentMessages,
-    relevantDocs,
-    response,
-) => {
-    console.log(
-        "\n======================================= DEBUG INFORMATION ========================================",
-    );
-    console.log("=> QUESTION:", lastMessage);
-    console.log("=> RETRIEVER QUERY:", query);
-    console.log("=> RECENT MESSAGES:", recentMessages);
-    console.log(
-        "=> DOCS:",
-        relevantDocs.map(doc => doc.pageContent),
-    );
-    console.log("=> RESPONSE", response);
-    console.log(
-        "==================================================================================================\n",
-    );
-};
-
 module.exports = {
 	llm,
 	classifier_llm,
@@ -517,5 +370,4 @@ module.exports = {
     determineRetrievalNeed,
     handleDirectResponse,
     handleRetrieverResponse,
-    logDebugInfo,
 };

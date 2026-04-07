@@ -4,7 +4,6 @@ const path = require("node:path");
 const { Document } = require("@langchain/core/documents");
 
 async function loadDocumentsFromJson(filePath) {
-	console.log(`Processando arquivo JSON: ${filePath}`);
 	try {
 		const fileContent = fs.readFileSync(filePath, "utf-8");
 		const jsonData = JSON.parse(fileContent);
@@ -39,15 +38,9 @@ async function loadDocumentsFromJson(filePath) {
 						},
 					});
 					documents.push(doc);
-				} else {
-					console.log(`Item inválido no índice ${i}`);
 				}
 			}
 		}
-
-		console.log(
-			`Arquivo ${fileName} processado. ${documents.length} documentos criados.`,
-		);
 		return documents;
 	} catch (error) {
 		console.error(`Erro ao processar o arquivo JSON ${filePath}:`, error);

@@ -12,9 +12,6 @@ const {
 } = require("./llm_config/llm_instance.js");
 
 const callModel = async state => {
-    console.log(
-        "======= ACIONANDO TRIMMER - ESTABELECENDO VARIÁVEIS DE MEMÓRIA =======\n\n",
-    );
     const trimmer = createTrimmer();
     if (!state.messages?.length) {
         throw new Error("SEM MENSAGENS EM state.messages!");
@@ -25,26 +22,19 @@ const callModel = async state => {
         .slice(-4)
         .map(msg => msg.content)
         .join("\n");
+    let orchestratedJson = [
+        {
+            perguntas: [
+                {
+                    tipo: "tipo_menu",
+                    texto: lastMessage,
+                },
+            ],
+        },
+    ];
+
     try {
-        orchestratedJson = JSON.stringify([
-            {
-                perguntas: [
-                    {
-                        tipo: "tipo_menu",
-                        texto: lastMessage,
-                    },
-                ],
-            },
-        ]);
-
-        console.log(
-            "======================== INICIANDO FLUXO DE RESPOSTA =========================\n",
-        );
-
         orchestratedJson = await orchestrateInput(lastMessage, recentMessages);
-        console.log("\n\n");
-        console.log("RESULTADO:");
-        console.log(JSON.stringify(orchestratedJson, null, 2));
     } catch (error) {
         console.error(
             "ERRO AO CHAMAR O MODELO | FALLBACK | MENSAGEM DE ERRO:",

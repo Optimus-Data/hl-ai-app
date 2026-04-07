@@ -5,7 +5,6 @@ const { createAndSaveEmbeddings } = require("./config_model/db_utils.js");
 |=============== CALL DB FUNCTION ================|
 +------------------------------------------------*/
 async function main() {
-  console.log("Iniciando geração de embeddings...");
   try {
     const result = await createAndSaveEmbeddings();
     return result;
@@ -15,5 +14,7 @@ async function main() {
 }
 
 main().then(result => {
-  console.log(result);
+  if (typeof result === "string" && result.toLowerCase().startsWith("erro")) {
+    console.error(result);
+  }
 });
